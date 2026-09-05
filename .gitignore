@@ -73,3 +73,56 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+
+# /[Ll]ibrary/ ignora la carpeta más pesada que Unity autogenera
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+
+# Archivos de memoria que pueden pesar muchísimo
+/[Mm]emoryCaptures/
+/[Rr]ecordings/
+
+# Archivos de caché de Visual Studio / JetBrains Rider
+.vs/
+.gradle/
+ExportedObj/
+.consulo/
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# Archivos meta autogenerados de Unity3D para los archivos ocultos
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
+
+# Reportes de crasheos
+sysinfo.txt
+crashlytics-build.properties
+
+# Builds y empaquetados
+*.apk
+*.aab
+*.unitypackage
+*.app
+
+# Archivos de datos empaquetados
+*.dat
+*.bindata
