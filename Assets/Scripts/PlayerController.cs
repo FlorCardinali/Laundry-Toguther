@@ -16,6 +16,13 @@ public class PlayerController : NetworkBehaviour
 
     [Header("Cámara y Rotación")]
     public float sensibilidadRaton = 20f;
+    public float limiteMirarArriba = -60f;
+    public float limiteMirarAbajo = 60f;
+    public NetworkVariable<float> rotacionXRed = new NetworkVariable<float>(
+        0f,
+        NetworkVariableReadPermission.Everyone,
+        NetworkVariableWritePermission.Owner 
+    );
     private float rotacionX = 0f;
     private Vector2 inputMirar;
 
@@ -32,11 +39,13 @@ public class PlayerController : NetworkBehaviour
     public NetworkVariable<int> itemEnMano = new NetworkVariable<int>(0,
         NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
+    //es como el start pero estando en red
     public override void OnNetworkSpawn()
     {
         if (!IsOwner)
         {
-            camaraJugador.gameObject.SetActive(false);
+            camaraJugador.enabled = false;
+
             camaraJugador.GetComponent<AudioListener>().enabled = false;
             GetComponent<PlayerInput>().enabled = false;
         }
@@ -57,11 +66,17 @@ public class PlayerController : NetworkBehaviour
 
     void Update()
     {
-        if (!IsOwner) return;
+        if (!IsOwner)
+        {
+            camaraJugador.transform.localRotation = Quaternion.Euler(rotacionXRed.Value, 0f, 0f);
+            return;
+        }
 
         MoverJugador();
         RotarCamara();
     }
+
+    //NUEVO IMPUT SISTEM
     public void OnMover(InputValue valor)
     {
         if (!IsOwner) return;
@@ -83,8 +98,14 @@ public class PlayerController : NetworkBehaviour
     public void OnSoltar(InputValue valor)
     {
         if (!IsOwner) return;
-        if (valor.isPressed && itemEnMano.Value != 0) SoltarItemServerRpc();
+        if (valor.isPressed && itemEnMano.Value != 0)
+        {
+            Vector3 posicionSegura = CalcularPosicionDeCaida();
+            SoltarItemServerRpc(posicionSegura);
+        }
     }
+    //FIN NEUVO IMPUT SISTEM
+
 
     void MoverJugador()
     {
@@ -100,7 +121,6 @@ public class PlayerController : NetworkBehaviour
         Vector3 caída = new Vector3(0, velocidadY, 0);
         controller.Move(caída * Time.deltaTime);
     }
-
     void RotarCamara()
     {
         float mouseX = inputMirar.x * sensibilidadRaton;
@@ -108,12 +128,15 @@ public class PlayerController : NetworkBehaviour
 
         float mouseY = inputMirar.y * sensibilidadRaton;
         rotacionX -= mouseY;
-        rotacionX = Mathf.Clamp(rotacionX, -90f, 90f);
+        rotacionX = Mathf.Clamp(rotacionX, limiteMirarArriba, limiteMirarAbajo);
 
         camaraJugador.transform.localRotation = Quaternion.Euler(rotacionX, 0f, 0f);
+        rotacionXRed.Value = rotacionX;
     }
 
-    //Hae click -> el raycast detecta el objeto -> El objeto te dice "soy la ropa sucia (ID en 1) y mi codigo de red es el 654216 -> Tu jugador le manda eso al Servidor porque es rpc -> el servidor busca el objeto por su id de networkobject, lo destruye del mapa y pone tu mano en estado 1 para que actives internamente el objeto falso que solo sirve para que los demas te vean.
+
+
+    //DATAZOO: Hae click -> el raycast detecta el objeto -> El objeto te dice "soy la ropa sucia (ID en 1) y mi codigo de red es el 654216 -> Tu jugador le manda eso al Servidor porque es rpc -> el servidor busca el objeto por su id de networkobject, lo destruye del mapa y pone tu mano en estado 1 para que actives internamente el objeto falso que solo sirve para que los demas te vean.
 
     void IntentarInteractuar()
     {
@@ -129,7 +152,19 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
-    //AGARRAR COSAS
+    //AGARRAR COSAS Y SOLTARLAS EGURAS OSEA QUE NO SE ME METAN EN EL MEDIO DE OBJETOS
+    private Vector3 CalcularPosicionDeCaida()
+    {
+        Vector3 origen = camaraJugador.transform.position;
+        Vector3 destino = puntoDeCaida.position;
+        Vector3 direccion = destino - origen;
+        float distancia = Vector3.Distance(origen, destino);
+        if (Physics.Raycast(origen, direccion.normalized, out RaycastHit hit, distancia))
+        {
+            return hit.point - (direccion.normalized * 0.3f);
+        }
+        return destino;
+    }
     [ServerRpc]
     public void AgarrarItemServerRpc(int idItem, ulong idObjetoRed)
     {
@@ -142,10 +177,10 @@ public class PlayerController : NetworkBehaviour
         }
     }
     [ServerRpc]
-    public void SoltarItemServerRpc()
+    public void SoltarItemServerRpc(Vector3 posicionSegura)
     {
         GameObject prefabASpawnear = itemEnMano.Value == 1 ? ropaSuciaPrefabFisico : ropaLimpiaPrefabFisico;
-        GameObject nuevoObjeto = Instantiate(prefabASpawnear, puntoDeCaida.position, Quaternion.identity);
+        GameObject nuevoObjeto = Instantiate(prefabASpawnear, posicionSegura, Quaternion.identity);
         nuevoObjeto.GetComponent<NetworkObject>().Spawn();
 
         itemEnMano.Value = 0;
@@ -200,10 +235,23 @@ public class PlayerController : NetworkBehaviour
             }
         }
     }
-    
+
     //FIN DE PORQUERIAS DEL LAVARROPAS
-    
-    
+
+    //ACA VA EL TEMITA DEL PANEL DE MEJORAS
+    [ServerRpc]
+    public void ComprarMejoraServerRpc(ulong idTablon, int idMejora)
+    {
+        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(idTablon, out NetworkObject objeto))
+        {
+            TablonManager tablon = objeto.GetComponent<TablonManager>();
+
+            // Acá a futuro podemos comprobar si el jugador tiene suficiente plata según el idMejora
+
+            tablon.InstanciarMejora(idMejora);
+            Debug.Log("¡Compraste la mejora número: " + idMejora + "!");
+        }
+    }
     private void ActualizarVisuales(int idItem)
     {
         ropaSuciaVisual.SetActive(idItem == 1);
