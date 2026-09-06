@@ -171,6 +171,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemRopa
   ShowTopMostFoldoutHeaderGroup: 1
   idItem: 1
+  mallaVisual: {fileID: 7530700631686564746}
+  colisionador: {fileID: 1596046200271657551}
+  fisicas: {fileID: 3095952582500356276}
+  lavadoRequerido:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
+  secadoRequerido:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
+  lavadoCorrectamente: 0
+  secadoCorrectamente: 0
 --- !u!1 &5473306654026906455
 GameObject:
   m_ObjectHideFlags: 0
