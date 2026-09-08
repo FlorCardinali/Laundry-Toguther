@@ -31,7 +31,7 @@ public class ItemRopa : NetworkBehaviour, IInteractuable
     public void Interactuar(PlayerController jugador)
     {
         ulong idRed = GetComponent<NetworkObject>().NetworkObjectId;
-        jugador.AgarrarItemServerRpc(idItem, idRed);
+        jugador.GetComponent<PlayerInventory>().AgarrarItemServerRpc(idItem, idRed);
     }
 
     [ClientRpc]
