@@ -17,7 +17,7 @@ public class TablonManager : NetworkBehaviour
     public void ProcesarCompra(PlayerController jugador, int idMejora)
     {
         ulong idTablonRed = GetComponent<NetworkObject>().NetworkObjectId;
-        jugador.ComprarMejoraServerRpc(idTablonRed, idMejora);
+        LavanderiaManager.Instancia.ComprarMejoraRpc(idTablonRed, idMejora);
     }
 
     // El servidor ejecuta esto

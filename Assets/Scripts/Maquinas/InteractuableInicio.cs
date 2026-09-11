@@ -5,7 +5,11 @@ public class InteractuableInicio : MonoBehaviour, IInteractuable
 {
     public void Interactuar(PlayerController jugador)
     {
-        ulong idLavarropas = GetComponentInParent<NetworkObject>().NetworkObjectId;
-        jugador.InteractuarInicioServerRpc(idLavarropas);
+        MaquinaManager maquina = GetComponentInParent<MaquinaManager>();
+        if (maquina != null)
+        {
+            // Usamos el nombre nuevo del RPC
+            LavanderiaManager.Instancia.InteractuarInicioRpc(maquina.NetworkObjectId);
+        }
     }
 }

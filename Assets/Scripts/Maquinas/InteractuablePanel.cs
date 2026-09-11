@@ -5,8 +5,11 @@ public class InteractuablePanel : MonoBehaviour, IInteractuable
 {
     public void Interactuar(PlayerController jugador)
     {
-        // Buscamos el ID del padre (el lavarropas)
-        ulong idLavarropas = GetComponentInParent<NetworkObject>().NetworkObjectId;
-        jugador.InteractuarPanelServerRpc(idLavarropas);
+        MaquinaManager maquina = GetComponentInParent<MaquinaManager>();
+        if (maquina != null)
+        {
+            // Usamos el nombre nuevo del RPC
+            LavanderiaManager.Instancia.InteractuarPanelRpc(maquina.NetworkObjectId);
+        }
     }
 }
