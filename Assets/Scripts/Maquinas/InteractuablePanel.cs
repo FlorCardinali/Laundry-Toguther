@@ -1,15 +1,13 @@
-using Unity.Netcode;
 using UnityEngine;
 
 public class InteractuablePanel : MonoBehaviour, IInteractuable
 {
+    private IMediadorInteraccion mediador;
+
+    void Awake() => mediador = GetComponentInParent<IMediadorInteraccion>();
+
     public void Interactuar(PlayerController jugador)
     {
-        MaquinaManager maquina = GetComponentInParent<MaquinaManager>();
-        if (maquina != null)
-        {
-            // Usamos el nombre nuevo del RPC
-            LavanderiaManager.Instancia.InteractuarPanelRpc(maquina.NetworkObjectId);
-        }
+        mediador?.ProcesarInteraccion(TipoAccion.Panel, jugador.NetworkObjectId);
     }
 }

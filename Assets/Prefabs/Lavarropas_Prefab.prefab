@@ -10,7 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4774513015311228630}
   - component: {fileID: 6641450605274118237}
-  - component: {fileID: 649833822632507538}
+  - component: {fileID: 4508629610092305038}
+  - component: {fileID: 7138486816791057075}
   m_Layer: 0
   m_Name: Lavarropas_Prefab
   m_TagString: Untagged
@@ -48,7 +49,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 2691293516
+  GlobalObjectIdHash: 2730094187
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -62,7 +63,7 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
---- !u!114 &649833822632507538
+--- !u!114 &4508629610092305038
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -71,35 +72,48 @@ MonoBehaviour:
   m_GameObject: {fileID: 432958269566202958}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f9b8baea696edbc4f8f172ae21ad9705, type: 3}
+  m_Script: {fileID: 11500000, guid: 91c3eca497318ef4e965f14a7c237bab, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: '::'
-  ShowTopMostFoldoutHeaderGroup: 1
+  m_EditorClassIdentifier: Assembly-CSharp::MaquinaLogica
   textoAccion: LAVANDO...
-  tiempoDeCiclo: 10
+  tiempoDeCiclo: 5
   idItemRequerido: 1
   idItemDevuelto: 2
+  esLavarropas: 1
   nombresModos:
   - SUAVE
   - NORMAL
   - FUERTE
   coloresModos:
-  - {r: 0.1960784, g: 0.8039216, b: 0.1960784, a: 1}
+  - {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   - {r: 1, g: 0.5, b: 0, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
-  estado:
-    UpdateTraits:
-      MinSecondsBetweenUpdates: 0
-      MaxSecondsBetweenUpdates: 0
-    m_InternalValue: 0
-  modoLavado:
-    UpdateTraits:
-      MinSecondsBetweenUpdates: 0
-      MaxSecondsBetweenUpdates: 0
-    m_InternalValue: 0
+  estadoLocal: 0
+  modoLavadoLocal: 0
   textoPantalla: {fileID: 897812670154998267}
-  prefabRopaDevuelta: {fileID: 6502940769198215246, guid: 8b13181782e7c9d42a05749531dc020e, type: 3}
-  esLavarropas: 1
+--- !u!114 &7138486816791057075
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 432958269566202958}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d403d72114cb4842944209d2610833f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MaquinaNetwork
+  ShowTopMostFoldoutHeaderGroup: 1
+  estadoNet:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
+  modoLavadoNet:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
   reqLavado:
     UpdateTraits:
       MinSecondsBetweenUpdates: 0

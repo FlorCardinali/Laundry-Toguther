@@ -11,7 +11,7 @@ public class PlayerController : NetworkBehaviour
     public GameObject canvasUIPrefab;
 
     private PlayerInventory inventario;
-    private MaquinaManager maquinaMiradaActual = null;
+    private MaquinaNetwork maquinaMiradaActual = null; // Actualizado a MaquinaNetwork
 
     void Awake()
     {
@@ -72,8 +72,11 @@ public class PlayerController : NetworkBehaviour
         Ray ray = camaraJugador.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
         if (Physics.Raycast(ray, out RaycastHit hit, 3f))
         {
-            MaquinaManager maquina = hit.collider.GetComponentInParent<MaquinaManager>();
-            if (maquina != null && maquina.estado.Value > 0)
+            // Ahora buscamos el envoltorio de red
+            MaquinaNetwork maquina = hit.collider.GetComponentInParent<MaquinaNetwork>();
+
+            // Leemos el estadoNet sincronizado
+            if (maquina != null && maquina.estadoNet.Value > 0)
             {
                 inventario.DispararMostrarNota(maquina.reqLavado.Value, maquina.reqSecado.Value, maquina.corrLavado.Value, maquina.corrSecado.Value);
                 maquinaMiradaActual = maquina;
