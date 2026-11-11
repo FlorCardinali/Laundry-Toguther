@@ -3,19 +3,27 @@ using TMPro;
 
 public class MostrarCodigoSala : MonoBehaviour
 {
-    private TMP_Text textoUI;
+    [Header("Referencia al Texto")]
+    public TMP_Text textoUI; 
 
     void Start()
     {
-        textoUI = GetComponent<TMP_Text>();
-
-        if (!string.IsNullOrEmpty(MenuConexion.codigoSalaGlobal))
+        if (textoUI != null)
         {
-            textoUI.text = "Código de Sala: " + MenuConexion.codigoSalaGlobal;
+            if (!string.IsNullOrEmpty(MenuConexion.codigoSalaGlobal))
+            {
+                textoUI.gameObject.SetActive(true);
+                textoUI.text = "Código de Sala: " + MenuConexion.codigoSalaGlobal;
+            }
+            else
+            {
+                textoUI.gameObject.SetActive(true);
+                textoUI.text = "Código de Sala: MODO_PRUEBA";
+            }
         }
         else
         {
-            textoUI.gameObject.SetActive(false); 
+            Debug.LogError("MostrarCodigoSala: ¡Falta asignar el componente TMP_Text en el Inspector!");
         }
     }
 }

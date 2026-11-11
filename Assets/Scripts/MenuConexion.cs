@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using System.Collections;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using Unity.Networking.Transport.Relay;
@@ -18,8 +19,10 @@ public class MenuConexion : MonoBehaviour
 
     [Header("UI Referencias")]
     public TMP_InputField inputCodigoSala;
-    public TMP_Text textoCodigoGenerado;
+   
 
+    [Header("Panel de Error")]
+    public GameObject panelErrorCodigo;
     private async void Start()
     {
         await UnityServices.InitializeAsync();
@@ -39,9 +42,6 @@ public class MenuConexion : MonoBehaviour
 
             string codigoSala = await RelayService.Instance.GetJoinCodeAsync(asignacion.AllocationId);
             codigoSalaGlobal = codigoSala;
-
-            if (textoCodigoGenerado != null)
-                textoCodigoGenerado.text = "Código de Sala: " + codigoSala;
 
             Debug.Log("Código generado: " + codigoSala);
 
@@ -67,14 +67,16 @@ public class MenuConexion : MonoBehaviour
     {
         if (string.IsNullOrEmpty(inputCodigoSala.text))
         {
-            Debug.LogWarning("¡Tenés que ingresar un código de sala!");
+            //Debug.LogWarning("¡Tenés que ingresar un código de sala!");
             return;
         }
 
         try
         {
-
             JoinAllocation asignacionUnion = await RelayService.Instance.JoinAllocationAsync(inputCodigoSala.text);
+
+            //no les peudo explciar lo mucho que odie no poner esta linea de codigo.
+            codigoSalaGlobal = inputCodigoSala.text.Trim();
 
             NetworkManager.Singleton.GetComponent<UnityTransport>().SetClientRelayData(
                 asignacionUnion.RelayServer.IpV4,
@@ -85,12 +87,30 @@ public class MenuConexion : MonoBehaviour
                 asignacionUnion.HostConnectionData
             );
 
+
             // Iniciar Cliente
             NetworkManager.Singleton.StartClient();
         }
         catch (RelayServiceException e)
         {
-            Debug.LogError("Error al unirse a la sala de Relay: " + e.Message);
+            Debug.LogWarning("Error al unirse a la sala de Relay: (pusiste mal el codigo xd) " + e.Message);
+            MostrarErrorTemporal();
         }
+    }
+
+    private void MostrarErrorTemporal()
+    {
+        if (panelErrorCodigo != null)
+        {
+            StopAllCoroutines(); 
+            StartCoroutine(RutinaMostrarError());
+        }
+    }
+
+    private IEnumerator RutinaMostrarError()
+    {
+        panelErrorCodigo.SetActive(true);
+        yield return new WaitForSeconds(2f); 
+        panelErrorCodigo.SetActive(false);
     }
 }

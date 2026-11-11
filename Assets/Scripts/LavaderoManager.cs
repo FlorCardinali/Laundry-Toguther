@@ -8,6 +8,7 @@ public class LavanderiaManager : NetworkBehaviour
     [Header("Prefabs Centralizados (Resultados)")]
     public GameObject prefabRopaMojada;
     public GameObject prefabRopaSeca;
+    public GameObject prefabRopaArruinada;
 
     private void Awake()
     {
@@ -16,13 +17,16 @@ public class LavanderiaManager : NetworkBehaviour
     }
 
 
-    public ulong ProcesarLavado(int reqLav, int reqSec, bool corrLav, bool corrSec, int modoUsado, Vector3 posicionDeMaquina)
+    public ulong ProcesarLavado(int reqLav, int reqSec, bool corrLav, bool corrSec, int modoUsado, Vector3 posicionDeMaquina, ulong idDueno, string apodo)
     {
         if (!IsServer) return 0;
 
-        if (reqLav == modoUsado) corrLav = true;
+        bool lavadoCorrecto = (reqLav == modoUsado);
+        corrLav = lavadoCorrecto;
 
-        GameObject nuevaRopa = Instantiate(prefabRopaMojada, posicionDeMaquina, Quaternion.identity);
+        GameObject prefabAUsar = lavadoCorrecto ? prefabRopaMojada : prefabRopaArruinada;
+
+        GameObject nuevaRopa = Instantiate(prefabAUsar, posicionDeMaquina, Quaternion.identity);
         nuevaRopa.GetComponent<NetworkObject>().Spawn();
 
         ItemRopa scriptRopa = nuevaRopa.GetComponent<ItemRopa>();
@@ -30,18 +34,34 @@ public class LavanderiaManager : NetworkBehaviour
         scriptRopa.secadoRequerido.Value = reqSec;
         scriptRopa.lavadoCorrectamente.Value = corrLav;
         scriptRopa.secadoCorrectamente.Value = corrSec;
+        scriptRopa.idDuenoNpc = idDueno;
+        scriptRopa.apodoDueno.Value = apodo;
+        scriptRopa.EstadoRopa = lavadoCorrecto ? 2 : 4; 
 
-        scriptRopa.OcultarClientRpc();
+        // Si es arruinada, forzamos los flags en false
+        if (!lavadoCorrecto)
+        {
+            scriptRopa.lavadoCorrectamente.Value = false;
+            scriptRopa.secadoCorrectamente.Value = false;
+        }
+
+        scriptRopa.OcultarItemRopaClientRpc();
         return nuevaRopa.GetComponent<NetworkObject>().NetworkObjectId;
     }
 
-    public ulong ProcesarSecado(int reqLav, int reqSec, bool corrLav, bool corrSec, int modoUsado, Vector3 posicionDeMaquina)
+    public ulong ProcesarSecado(int reqLav, int reqSec, bool corrLav, bool corrSec, int modoUsado, Vector3 posicionDeMaquina, ulong idDueno, string apodo)
     {
         if (!IsServer) return 0;
 
-        if (reqSec == modoUsado) corrSec = true;
+        bool secadoCorrecto = (reqSec == modoUsado);
+        corrSec = secadoCorrecto;
 
-        GameObject nuevaRopa = Instantiate(prefabRopaSeca, posicionDeMaquina, Quaternion.identity);
+        // Si el lavado ya venía mal, o el secado sale mal → arruinada
+        bool quedaBien = corrLav && secadoCorrecto;
+
+        GameObject prefabAUsar = quedaBien ? prefabRopaSeca : prefabRopaArruinada;
+
+        GameObject nuevaRopa = Instantiate(prefabAUsar, posicionDeMaquina, Quaternion.identity);
         nuevaRopa.GetComponent<NetworkObject>().Spawn();
 
         ItemRopa scriptRopa = nuevaRopa.GetComponent<ItemRopa>();
@@ -49,10 +69,19 @@ public class LavanderiaManager : NetworkBehaviour
         scriptRopa.secadoRequerido.Value = reqSec;
         scriptRopa.lavadoCorrectamente.Value = corrLav;
         scriptRopa.secadoCorrectamente.Value = corrSec;
+        scriptRopa.idDuenoNpc = idDueno;
+        scriptRopa.apodoDueno.Value = apodo;
+        scriptRopa.EstadoRopa = quedaBien ? 3 : 4; // 3 para seca, 4 para arruinada
 
-        scriptRopa.OcultarClientRpc();
+        if (!quedaBien)
+        {
+            scriptRopa.lavadoCorrectamente.Value = false;
+            scriptRopa.secadoCorrectamente.Value = false;
+        }
+
+        scriptRopa.OcultarItemRopaClientRpc();
         return nuevaRopa.GetComponent<NetworkObject>().NetworkObjectId;
     }
 
-    
+
 }

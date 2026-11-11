@@ -49,8 +49,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 2730094187
+  GlobalObjectIdHash: 2691293516
   InScenePlacedSourceGlobalObjectIdHash: 0
+  m_InScenePlacedDisabledByDefault: 0
   DeferredDespawnTick: 0
   Ownership: 1
   AlwaysReplicateAsRoot: 0
@@ -587,6 +588,7 @@ GameObject:
   - component: {fileID: 4540715571222546417}
   - component: {fileID: 3769268646574445516}
   - component: {fileID: 6736330127978099326}
+  - component: {fileID: 545835620655913732}
   m_Layer: 0
   m_Name: Modelo
   m_TagString: Untagged
@@ -930,6 +932,22 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.2972788, y: 1.7889252, z: 1.5954342}
   m_Center: {x: 0.14863938, y: 0.3944626, z: 0.2977171}
+--- !u!208 &545835620655913732
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2498774729030727133}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.64900005, y: 0.89400005, z: 0.79800004}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0.149, y: 0.39400002, z: 0.298}
+  m_TimeToStationary: 0.5
 --- !u!1 &4003940304738398712
 GameObject:
   m_ObjectHideFlags: 0

@@ -61,6 +61,7 @@ public class PlayerMovement : NetworkBehaviour
 
     void MoverJugador()
     {
+        if (Cursor.lockState == CursorLockMode.None) return;
         if (controller.isGrounded && velocidadY < 0) velocidadY = -2f;
 
         Vector3 movimiento = transform.right * inputMovimiento.x + transform.forward * inputMovimiento.y;
@@ -72,6 +73,7 @@ public class PlayerMovement : NetworkBehaviour
 
     void RotarCamara()
     {
+        if (Cursor.lockState == CursorLockMode.None) return;
         float mouseX = inputMirar.x * sensibilidadRaton;
         transform.Rotate(Vector3.up * mouseX);
 
