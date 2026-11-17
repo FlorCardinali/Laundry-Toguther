@@ -64,9 +64,11 @@ public class PlayerController : NetworkBehaviour
         Ray ray = camaraJugador.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
         if (Physics.Raycast(ray, out RaycastHit hit, 3f))
         {
+            Debug.Log($"[CONTROLLER] Raycast impactó en: {hit.collider.name}");
             IInteractuable objetoInteractuable = hit.collider.GetComponentInParent<IInteractuable>();
             if (objetoInteractuable != null)
             {
+                Debug.Log($"[CONTROLLER] Encontré un IInteractuable. Llamando a Interactuar...");
                 objetoInteractuable.Interactuar(this);
                 return;
             }

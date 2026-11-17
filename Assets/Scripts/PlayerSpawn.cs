@@ -4,38 +4,26 @@ using System.Collections;
 
 public class PlayerSpawn : NetworkBehaviour
 {
+    private CharacterController controller;
+
+    private void Awake()
+    {
+        controller = GetComponent<CharacterController>();
+        if (controller != null) controller.enabled = false;
+    }
+
     public override void OnNetworkSpawn()
     {
-        base.OnNetworkSpawn();
-
-        if (IsServer)
+        if (IsOwner)
         {
-            StartCoroutine(SpawnearAlSiguienteFrame());
+            StartCoroutine(ActivarControlador());
         }
     }
 
-    private IEnumerator SpawnearAlSiguienteFrame()
+    private IEnumerator ActivarControlador()
     {
         yield return null;
 
-        if (SpawnManager.Instance != null)
-        {
-            Vector3 nuevaPosicion = SpawnManager.Instance.ObtenerPosicionParaCliente(OwnerClientId);
-
-            CharacterController cc = GetComponent<CharacterController>();
-            if (cc != null) cc.enabled = false;
-
-            transform.position = nuevaPosicion;
-
-            // Forzamos a que el CharacterController se entere del nuevo lugar
-            if (cc != null) cc.enabled = true;
-
-            // Opcional: si usás NetworkTransform, forzamos el teletransporte
-            var netTransform = GetComponent<Unity.Netcode.Components.NetworkTransform>();
-            if (netTransform != null)
-            {
-                netTransform.Teleport(nuevaPosicion, transform.rotation, transform.localScale);
-            }
-        }
+        if (controller != null) controller.enabled = true;
     }
 }

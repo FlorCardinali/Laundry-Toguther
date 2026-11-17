@@ -29,7 +29,11 @@ public class PlayerMovement : NetworkBehaviour
     {
         controller = GetComponent<CharacterController>();
     }
-
+    private void Start()
+    {
+        float sensibilidadGuardada = PlayerPrefs.GetFloat("SensibilidadMouse", 2f);
+        sensibilidadRaton = 20f * sensibilidadGuardada;
+    }
     public override void OnNetworkSpawn()
     {
         if (!IsOwner)
@@ -61,6 +65,7 @@ public class PlayerMovement : NetworkBehaviour
 
     void MoverJugador()
     {
+        if (!controller.enabled) return;
         if (Cursor.lockState == CursorLockMode.None) return;
         if (controller.isGrounded && velocidadY < 0) velocidadY = -2f;
 

@@ -454,15 +454,26 @@ public class PlayerUI : MonoBehaviour
     public void BotonVolverAlMenu()
     {
         desconectando = true;
-
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+
+        PlayerInventory miInventario = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerInventory>();
+        if (miInventario != null && miInventario.itemEnMano.Value != 0)
+        {
+            miInventario.IntentarSoltar();
+        }
+
+        StartCoroutine(EsperarYDesconectar());
+    }
+
+    private System.Collections.IEnumerator EsperarYDesconectar()
+    {
+        yield return new WaitForSeconds(0.2f);
 
         if (NetworkManager.Singleton != null)
         {
             NetworkManager.Singleton.Shutdown();
         }
-
         SceneManager.LoadScene("Menu_Principal");
     }
 }

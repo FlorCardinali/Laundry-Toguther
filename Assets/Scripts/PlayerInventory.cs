@@ -37,26 +37,34 @@ public class PlayerInventory : NetworkBehaviour
     {
         itemEnMano.OnValueChanged -= (viejo, nuevo) => ActualizarVisuales(nuevo);
 
+        // Si soy el servidor (Host) y el jugador se está yendo con ropa en la mano
         if (IsServer && itemEnMano.Value != 0 && objetoOcultoEnMano.Value != 0)
         {
             if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(objetoOcultoEnMano.Value, out NetworkObject objetoOculto))
             {
-                Vector3 posicionCaida = transform.position + transform.forward * 0.5f + Vector3.up * 0.25f;
+                if (objetoOculto != null && objetoOculto.IsSpawned)
+                {
+                    // Lo tiramos un poco al frente y arriba
+                    Vector3 posicionCaida = transform.position + transform.forward * 0.5f + Vector3.up * 0.25f;
 
-                NetworkTransform netTransform = objetoOculto.GetComponent<NetworkTransform>();
-                if (netTransform != null)
-                {
-                    netTransform.Teleport(posicionCaida, Quaternion.identity, objetoOculto.transform.localScale);
-                }
-                else
-                {
-                    objetoOculto.transform.position = posicionCaida;
-                }
+                    NetworkTransform netTransform = objetoOculto.GetComponent<NetworkTransform>();
+                    if (netTransform != null)
+                    {
+                        netTransform.Teleport(posicionCaida, Quaternion.identity, objetoOculto.transform.localScale);
+                    }
+                    else
+                    {
+                        objetoOculto.transform.position = posicionCaida;
+                    }
 
-                ItemRopa scriptRopa = objetoOculto.GetComponent<ItemRopa>();
-                if (scriptRopa != null)
-                {
-                    scriptRopa.MostrarClientRpc();
+                    ItemRopa scriptRopa = objetoOculto.GetComponent<ItemRopa>();
+                    if (scriptRopa != null)
+                    {
+                        // Lo hacemos visible para todos
+                        scriptRopa.MostrarClientRpc();
+
+                        objetoOculto.RemoveOwnership();
+                    }
                 }
             }
         }
@@ -120,12 +128,27 @@ public class PlayerInventory : NetworkBehaviour
     [ServerRpc]
     public void AgarrarItemServerRpc(int idItem, ulong idObjetoRed)
     {
-        if (itemEnMano.Value != 0) return;
+        Debug.Log($"[SERVER] Entró AgarrarItemServerRpc. Quien pide: {OwnerClientId}. Busco item: {idObjetoRed}");
+
+        if (itemEnMano.Value != 0)
+        {
+            Debug.LogWarning($"[SERVER] Abortado: Ya tengo algo en la mano ({itemEnMano.Value}).");
+            return;
+        }
 
         if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(idObjetoRed, out NetworkObject objetoEnElMundo))
         {
+            Debug.Log($"[SERVER] Objeto encontrado en SpawnedObjects.");
             ItemRopa scriptRopa = objetoEnElMundo.GetComponent<ItemRopa>();
-            if (scriptRopa == null) return;
+            if (scriptRopa == null)
+            {
+                Debug.LogError($"[SERVER] Abortado: El objeto no tiene el script ItemRopa.");
+                return;
+            }
+
+            // Acá va tu ChangeOwnership (si es que lo pusiste)
+            objetoEnElMundo.ChangeOwnership(OwnerClientId);
+            Debug.Log($"[SERVER] Cambié el dueño del objeto a {OwnerClientId}.");
 
             itemEnMano.Value = scriptRopa.EstadoRopa;
             objetoOcultoEnMano.Value = idObjetoRed;
@@ -145,6 +168,12 @@ public class PlayerInventory : NetworkBehaviour
                 scriptRopa.secadoCorrectamente.Value,
                 scriptRopa.apodoDueno.Value.ToString(),
                 scriptRopa.EstadoRopa);
+
+            Debug.Log($"[SERVER] Proceso de agarre terminado con éxito.");
+        }
+        else
+        {
+            Debug.LogError($"[SERVER] ERROR FATAL: El objeto {idObjetoRed} NO está en SpawnedObjects del servidor.");
         }
     }
 
@@ -165,6 +194,8 @@ public class PlayerInventory : NetworkBehaviour
 
             ItemRopa scriptRopa = objetoOculto.GetComponent<ItemRopa>();
             scriptRopa.MostrarClientRpc();
+            // y esta tambieeeeeeeeennn
+            objetoOculto.RemoveOwnership();
         }
         itemEnMano.Value = 0;
         objetoOcultoEnMano.Value = 0;

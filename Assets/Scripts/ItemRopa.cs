@@ -39,8 +39,11 @@ public class ItemRopa : NetworkBehaviour, IInteractuable
 
     public void Interactuar(PlayerController jugador)
     {
+        Debug.Log($"[ITEM] Interactuar llamado. Soy IsOwner: {IsOwner}, Mi NetworkId: {NetworkObjectId}");
+
         ulong idRed = GetComponent<NetworkObject>().NetworkObjectId;
         jugador.GetComponent<PlayerInventory>().AgarrarItemServerRpc(EstadoRopa, idRed);
+        Debug.Log($"[ITEM] Envié el ServerRpc al jugador.");
     }
 
     [ClientRpc]
@@ -58,9 +61,11 @@ public class ItemRopa : NetworkBehaviour, IInteractuable
         if (colisionador != null)
         {
             colisionador.enabled = true;
-           
         }
-        if (fisicas != null) fisicas.isKinematic = true;
+        if (fisicas != null)
+        {
+            fisicas.isKinematic = false; 
+        }
 
         if (animarEnSuelo)
         {

@@ -347,13 +347,13 @@ GameObject:
   m_Component:
   - component: {fileID: 4550003719769423100}
   - component: {fileID: 4945654849017989096}
+  - component: {fileID: 8790539379186208078}
   - component: {fileID: 5381379237217292238}
   - component: {fileID: 8811720195692799636}
   - component: {fileID: 1221213191405024938}
   - component: {fileID: 6878503322793017841}
   - component: {fileID: 6486492973069732330}
   - component: {fileID: 3509752582774186037}
-  - component: {fileID: 8790539379186208078}
   m_Layer: 0
   m_Name: Player_Prefab
   m_TagString: Untagged
@@ -405,6 +405,19 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
+--- !u!114 &8790539379186208078
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5971873000283685438}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e2eb73fb65178d43ac48d98938b67b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  ShowTopMostFoldoutHeaderGroup: 1
 --- !u!114 &5381379237217292238
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -585,19 +598,6 @@ MonoBehaviour:
       MinSecondsBetweenUpdates: 0
       MaxSecondsBetweenUpdates: 0
     m_InternalValue: 0
---- !u!114 &8790539379186208078
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5971873000283685438}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2e2eb73fb65178d43ac48d98938b67b0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: '::'
-  ShowTopMostFoldoutHeaderGroup: 1
 --- !u!1 &5999190123704214046
 GameObject:
   m_ObjectHideFlags: 0
