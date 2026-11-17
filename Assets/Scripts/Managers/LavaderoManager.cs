@@ -39,11 +39,11 @@ public class LavanderiaManager : NetworkBehaviour
         scriptRopa.EstadoRopa = lavadoCorrecto ? 2 : 4; 
 
         // Si es arruinada, forzamos los flags en false
-        if (!lavadoCorrecto)
-        {
-            scriptRopa.lavadoCorrectamente.Value = false;
-            scriptRopa.secadoCorrectamente.Value = false;
-        }
+        //if (!lavadoCorrecto)
+        //{
+        //    //scriptRopa.lavadoCorrectamente.Value = false;
+        //    scriptRopa.secadoCorrectamente.Value = false;
+        //}
 
         scriptRopa.OcultarItemRopaClientRpc();
         return nuevaRopa.GetComponent<NetworkObject>().NetworkObjectId;

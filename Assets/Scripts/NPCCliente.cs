@@ -58,7 +58,7 @@ public class NPCCliente : NetworkBehaviour
         {
             idNpcRed = GetComponent<NetworkObject>().NetworkObjectId;
             // aca me falta justar que cambia la cantida debolsas segun la cantidad de dias
-            cantidadBolsos.Value = Random.Range(1, 5);
+            cantidadBolsos.Value = Random.Range(1, 2);
         }
 
         apodoCliente.OnValueChanged += (viejoApodo, nuevoApodo) => {
@@ -170,6 +170,8 @@ public class NPCCliente : NetworkBehaviour
         }
     }
 
+
+    // para que quiera atienda al cleinte
     [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
     public void AtenderClienteServerRpc(string nuevoApodo, RpcParams rpcParams = default)
     {
@@ -223,6 +225,8 @@ public class NPCCliente : NetworkBehaviour
         SpawnearBolsosEnMostrador();
     }
 
+
+    // para que el server le deje abrir lo del nombre al cleutne
     [ClientRpc]
     public void SolicitarAperturaPanelClientRpc(ulong idJugador, ulong idNpc)
     {
@@ -244,6 +248,8 @@ public class NPCCliente : NetworkBehaviour
         ui.AbrirPanelAtencion(idNpc);
     }
 
+
+    //para que quien sea envie la ropa al npc
     [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
     public void EntregarRopaServerRpc(RpcParams rpcParams = default)
     {
@@ -270,23 +276,23 @@ public class NPCCliente : NetworkBehaviour
 
         bolsasEntregadas.Value++;
 
-        // Si ya entregó todas las bolsas que le correspondían
+        // Si ya entregó todas las bolsas de l cleinte
         if (bolsasEntregadas.Value >= cantidadBolsos.Value)
         {
             FinalizarPedido(idJugador);
         }
     }
 
+    //a esto no llegas si no sos server
     private void FinalizarPedido(ulong idJugador)
     {
-        if (bolsasCorrectas.Value > 0)
-        {
-            Debug.Log($"NPC {idNpcRed}: Pagando al jugador {idJugador} por {bolsasCorrectas.Value} bolsa(s) correcta(s) de {cantidadBolsos.Value}.");
-        }
+        int pagoPorBolsa = 15; // despues lo pongo a la vista
+        int totalAPagar = bolsasCorrectas.Value * pagoPorBolsa;
 
-        if (bolsasCorrectas.Value < cantidadBolsos.Value)
+        if (totalAPagar > 0 && DineroManager.Instancia != null)
         {
-            if (agente != null) agente.speed *= 2f;
+            DineroManager.Instancia.SumarDinero(totalAPagar);
+            Debug.Log($"NPC pagó ${totalAPagar} por {bolsasCorrectas.Value} bolsa(s) correcta(s) de {cantidadBolsos.Value}.");
         }
 
         NetworkObject.Despawn();

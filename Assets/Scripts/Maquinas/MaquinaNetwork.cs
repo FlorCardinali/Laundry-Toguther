@@ -17,7 +17,28 @@ public class MaquinaNetwork : NetworkBehaviour
     public NetworkVariable<bool> corrSecado = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     private ulong idDuenoGuardado;
     public string apodoGuardado;
-    public int EstadoRopa;
+    public int EstadoRopaActual
+    {
+        get
+        {
+            if (estadoNet.Value == 0) return 0;
+
+            if (logica.esLavarropas)
+            {
+               
+                if (estadoNet.Value < 3) return 1; 
+
+                return corrLavado.Value ? 2 : 4; 
+            }
+            else
+            {
+                if (estadoNet.Value < 3) return 2; 
+
+                bool quedaBien = corrLavado.Value && corrSecado.Value;
+                return quedaBien ? 3 : 4; 
+            }
+        }
+    }
 
 
     void Awake()
@@ -69,6 +90,18 @@ public class MaquinaNetwork : NetworkBehaviour
     {
         estadoNet.Value = 2;
         yield return new WaitForSeconds(logica.tiempoDeCiclo);
+
+        if (logica.esLavarropas)
+        {
+            bool correcto = (reqLavado.Value == modoLavadoNet.Value);
+            corrLavado.Value = correcto;
+        }
+        else
+        {
+            bool correcto = (reqSecado.Value == modoLavadoNet.Value);
+            corrSecado.Value = correcto;
+        }
+
         estadoNet.Value = 3;
     }
 
@@ -88,7 +121,6 @@ public class MaquinaNetwork : NetworkBehaviour
 
                     idDuenoGuardado = ropa.idDuenoNpc;
                     apodoGuardado = ropa.apodoDueno.Value.ToString();
-                    EstadoRopa = ropa.EstadoRopa;
 
                     reqLavado.Value = ropa.lavadoRequerido.Value;
                     reqSecado.Value = ropa.secadoRequerido.Value;
@@ -124,12 +156,13 @@ public class MaquinaNetwork : NetworkBehaviour
                     {
                         inventario.itemEnMano.Value = ropaNueva.EstadoRopa;
                         inventario.MostrarNotaClientRpc(
-                            ropaNueva.lavadoRequerido.Value,
-                            ropaNueva.secadoRequerido.Value,
-                            ropaNueva.lavadoCorrectamente.Value,
-                            ropaNueva.secadoCorrectamente.Value,
-                            ropaNueva.apodoDueno.Value.ToString(),
-                            ropaNueva.EstadoRopa);
+                            reqLavado.Value,
+                            reqSecado.Value,
+                            corrLavado.Value,
+                            corrSecado.Value,
+                            apodoGuardado,
+                            ropaNueva.EstadoRopa
+                        );
                     }
                 }
 

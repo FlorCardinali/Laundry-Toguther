@@ -19,7 +19,9 @@ public class MenuConexion : MonoBehaviour
 
     [Header("UI Referencias")]
     public TMP_InputField inputCodigoSala;
-   
+    public GameObject panelConexion;
+    public GameObject panelCreditos;
+    public GameObject panelOpciones;
 
     [Header("Panel de Error")]
     public GameObject panelErrorCodigo;
@@ -32,6 +34,45 @@ public class MenuConexion : MonoBehaviour
             await AuthenticationService.Instance.SignInAnonymouslyAsync();
             Debug.Log("Jugador autenticado con ID: " + AuthenticationService.Instance.PlayerId);
         }
+    }
+
+    
+    public void BotonSalir()
+    {
+        Application.Quit();
+    }
+    public void BotonAbrirPanelConexion()
+    {
+        if (panelConexion != null)
+        {
+            panelConexion.SetActive(true);
+        }
+    }
+  
+
+    public void BotonAbrirPanelCreditos()
+    {
+        if (panelCreditos != null)
+        {
+            panelCreditos.SetActive(true);
+        }
+    }
+
+
+    public void BotonAbrirPanelOpciones()
+    {
+        if (panelOpciones != null)
+        {
+            panelOpciones.SetActive(true);
+        }
+    }
+
+    public void BotonCerrarPaneles()
+    {
+        panelConexion.SetActive(false);
+        panelCreditos.SetActive(false);
+        panelOpciones.SetActive(false);
+
     }
 
     public async void BotonHostRelay()

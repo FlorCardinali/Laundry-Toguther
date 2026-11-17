@@ -96,7 +96,7 @@ public class PlayerController : NetworkBehaviour
                     maquina.corrLavado.Value,
                     maquina.corrSecado.Value,
                     maquina.apodoGuardado, 
-                    maquina.EstadoRopa 
+                    maquina.EstadoRopaActual
                 );
 
                 maquinaMiradaActual = maquina;

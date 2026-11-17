@@ -13,6 +13,11 @@ public class PlayerInventory : NetworkBehaviour
     public GameObject[] itemsVisuales;
     public GameObject[] prefabsFisicos;
 
+    [Header("Configuración de Soltar")]
+    public float distanciaMaximaSoltar = 3f;
+    public float alturaOffset = 0.25f;
+    public LayerMask capasSoltables;
+
     public NetworkVariable<ulong> objetoOcultoEnMano = new NetworkVariable<ulong>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     public NetworkVariable<int> itemEnMano = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
@@ -31,6 +36,30 @@ public class PlayerInventory : NetworkBehaviour
     public override void OnNetworkDespawn()
     {
         itemEnMano.OnValueChanged -= (viejo, nuevo) => ActualizarVisuales(nuevo);
+
+        if (IsServer && itemEnMano.Value != 0 && objetoOcultoEnMano.Value != 0)
+        {
+            if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(objetoOcultoEnMano.Value, out NetworkObject objetoOculto))
+            {
+                Vector3 posicionCaida = transform.position + transform.forward * 0.5f + Vector3.up * 0.25f;
+
+                NetworkTransform netTransform = objetoOculto.GetComponent<NetworkTransform>();
+                if (netTransform != null)
+                {
+                    netTransform.Teleport(posicionCaida, Quaternion.identity, objetoOculto.transform.localScale);
+                }
+                else
+                {
+                    objetoOculto.transform.position = posicionCaida;
+                }
+
+                ItemRopa scriptRopa = objetoOculto.GetComponent<ItemRopa>();
+                if (scriptRopa != null)
+                {
+                    scriptRopa.MostrarClientRpc();
+                }
+            }
+        }
     }
 
     // Funciones públicas para disparar las notas desde otros scripts
@@ -39,68 +68,76 @@ public class PlayerInventory : NetworkBehaviour
 
     public void IntentarSoltar()
     {
-        Debug.Log($"[Soltar] itemEnMano={itemEnMano.Value}, objetoOculto={objetoOcultoEnMano.Value}, IsOwner={IsOwner}");
         if (itemEnMano.Value != 0)
         {
             Vector3 posicionSegura = CalcularPosicionDeCaida();
             SoltarItemServerRpc(posicionSegura);
             OnOcultarNota?.Invoke();
         }
-        else Debug.LogWarning("[Soltar] itemEnMano es 0, no hago nada");
     }
 
     private Vector3 CalcularPosicionDeCaida()
     {
-        Vector3 origenPlayer = transform.position + Vector3.up * 0.5f;
-        Vector3 direccionMirada = camaraJugador.transform.forward;
-        Vector3 direccionPlana = new Vector3(direccionMirada.x, 0, direccionMirada.z).normalized;
+        Ray ray = camaraJugador.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
 
-        if (direccionPlana == Vector3.zero) direccionPlana = transform.forward;
-
-        float distanciaCaida = 1.2f;
-        Vector3 destinoIdeal = origenPlayer + (direccionPlana * distanciaCaida);
-
-        if (Physics.Raycast(origenPlayer, direccionPlana, out RaycastHit hitPared, distanciaCaida))
+        if (Physics.Raycast(ray, out RaycastHit hit, distanciaMaximaSoltar, capasSoltables))
         {
-            destinoIdeal = hitPared.point - (direccionPlana * 0.3f);
+            if (!HayObstaculoArriba(hit.point))
+            {
+                return hit.point + Vector3.up * alturaOffset;
+            }
         }
 
-        Vector3 origenSuelo = destinoIdeal + Vector3.up * 2f;
-        if (Physics.Raycast(origenSuelo, Vector3.down, out RaycastHit hitSuelo, 4f))
-        {
+        Vector3 puntoFrente = transform.position + transform.forward * 1.8f;
+        Vector3 origen = puntoFrente + Vector3.up * 2f;
 
-            return hitSuelo.point + new Vector3(0, 0.2f, 0);
+        if (Physics.Raycast(origen, Vector3.down, out RaycastHit hitSuelo, 5f, capasSoltables))
+        {
+            if (!HayObstaculoArriba(hitSuelo.point))
+            {
+                return hitSuelo.point + Vector3.up * alturaOffset;
+            }
         }
 
-        return destinoIdeal + new Vector3(0, 0.2f, 0);
+        return transform.position + transform.forward * 1.2f + Vector3.up * alturaOffset;
+    }
+
+    private bool HayObstaculoArriba(Vector3 puntoSuelo)
+    {
+        Collider[] cols = Physics.OverlapSphere(puntoSuelo + Vector3.up * 0.6f, 0.4f);
+
+        foreach (var col in cols)
+        {
+            if (col.gameObject.layer != LayerMask.NameToLayer("Suelo") &&
+                col.GetComponent<ItemRopa>() == null)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     [ServerRpc]
     public void AgarrarItemServerRpc(int idItem, ulong idObjetoRed)
     {
         if (itemEnMano.Value != 0) return;
-        Debug.Log($"[Agarrar] entró. idObjetoRed={idObjetoRed}, itemEnMano antes={itemEnMano.Value}");
 
         if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(idObjetoRed, out NetworkObject objetoEnElMundo))
         {
             ItemRopa scriptRopa = objetoEnElMundo.GetComponent<ItemRopa>();
             if (scriptRopa == null) return;
 
-            // 1. Setear NV primero
             itemEnMano.Value = scriptRopa.EstadoRopa;
             objetoOcultoEnMano.Value = idObjetoRed;
 
-            // 2. Ocultar después
             scriptRopa.OcultarItemRopaClientRpc();
 
-            // 3. Registrar retiro con try/catch
             if (MostradorManager.Instancia != null)
             {
                 try { MostradorManager.Instancia.RegistrarBolsoRetirado(objetoEnElMundo.gameObject); }
                 catch (System.Exception e) { Debug.LogError("Error en RegistrarBolsoRetirado: " + e); }
             }
 
-            // 4. Nota al final
             MostrarNotaClientRpc(
                 scriptRopa.lavadoRequerido.Value,
                 scriptRopa.secadoRequerido.Value,
@@ -109,7 +146,6 @@ public class PlayerInventory : NetworkBehaviour
                 scriptRopa.apodoDueno.Value.ToString(),
                 scriptRopa.EstadoRopa);
         }
-        Debug.Log($"[Agarrar] itemEnMano ahora={itemEnMano.Value}, objetoOculto={objetoOcultoEnMano.Value}");
     }
 
     [ServerRpc]
@@ -134,6 +170,7 @@ public class PlayerInventory : NetworkBehaviour
         objetoOcultoEnMano.Value = 0;
     }
 
+    //para pedir al server msotrar nota
     [ClientRpc]
     public void MostrarNotaClientRpc(int reqLav, int reqSec, bool corrLav, bool corrSec, string apodo, int estadoRopa)
     {
@@ -141,13 +178,13 @@ public class PlayerInventory : NetworkBehaviour
         OnMostrarNota?.Invoke(reqLav, reqSec, corrLav, corrSec, apodo, estadoRopa);
     }
 
+    //esta cosa cambia los modelos falsos que sostiene cada jugador apra simular que sostiene cosas
     private void ActualizarVisuales(int idItem)
     {
         for (int i = 0; i < itemsVisuales.Length; i++)
         {
             if (itemsVisuales[i] != null)
             {
-                Debug.Log($"[Visuales] idItem={idItem}, itemsVisuales.Length={itemsVisuales.Length}");
                 bool activo = (idItem > 0) && (i == (idItem - 1)) && (i < itemsVisuales.Length);
                 itemsVisuales[i].SetActive(activo);
             }

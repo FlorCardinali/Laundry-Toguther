@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8593307246500666914}
   - component: {fileID: 7840611105459339687}
   - component: {fileID: 3000231150116813325}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -86,7 +86,7 @@ GameObject:
   - component: {fileID: 6392086606052785783}
   - component: {fileID: 6609520760804014035}
   - component: {fileID: 651379467679682620}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Texto_Modo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -223,7 +223,7 @@ GameObject:
   - component: {fileID: 3728789773041348891}
   - component: {fileID: 2603482542365205643}
   - component: {fileID: 6735642938795985101}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Zona_Panel
   m_TagString: BotonLavarropas
   m_Icon: {fileID: 0}
@@ -291,7 +291,7 @@ GameObject:
   - component: {fileID: 8680721751147364865}
   - component: {fileID: 6490376416870728394}
   - component: {fileID: 3850246591643983458}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Modelo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -421,7 +421,7 @@ GameObject:
   - component: {fileID: 1493562993653940223}
   - component: {fileID: 3380506295981794328}
   - component: {fileID: 114103042909823318}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -523,7 +523,7 @@ GameObject:
   - component: {fileID: 6955760997104952398}
   - component: {fileID: 152485080419876409}
   - component: {fileID: 3836725359912312030}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Zona_Boton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -589,7 +589,7 @@ GameObject:
   - component: {fileID: 4409396728710070585}
   - component: {fileID: 3042076251738485023}
   - component: {fileID: 799215879822424969}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cylinder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -680,7 +680,7 @@ GameObject:
   - component: {fileID: 3307079373289307201}
   - component: {fileID: 8924678961758988611}
   - component: {fileID: 6936010085242410272}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Secadora_Prefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -803,6 +803,7 @@ MonoBehaviour:
       MinSecondsBetweenUpdates: 0
       MaxSecondsBetweenUpdates: 0
     m_InternalValue: 0
+  apodoGuardado: 
 --- !u!1 &8335902382795460175
 GameObject:
   m_ObjectHideFlags: 0
@@ -814,7 +815,7 @@ GameObject:
   - component: {fileID: 3156253180752702943}
   - component: {fileID: 1173876924653744103}
   - component: {fileID: 3572334683068899407}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Zona_Tambor
   m_TagString: PuertaLavarropas
   m_Icon: {fileID: 0}
@@ -878,7 +879,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7096222723147295962}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Colliders
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -914,7 +915,7 @@ GameObject:
   - component: {fileID: 2072407501487909966}
   - component: {fileID: 8534977455505460644}
   - component: {fileID: 56515587706809387}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cylinder
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 420996767350458948}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -40,7 +40,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3133116117410625118}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: 4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -71,7 +71,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2516512326965679297}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -102,7 +102,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1617746643204113660}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: 3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -136,7 +136,7 @@ GameObject:
   - component: {fileID: 5564024686468526690}
   - component: {fileID: 1545270666287840030}
   - component: {fileID: 3439741244924459783}
-  m_Layer: 2
+  m_Layer: 7
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -249,7 +249,7 @@ GameObject:
   - component: {fileID: 2537515350437100077}
   - component: {fileID: 9029028299183556471}
   - component: {fileID: 6454351077905681309}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Mostrador
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -322,8 +322,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.2118349, y: 1.2543344, z: 2.5685034}
-  m_Center: {x: 0.89408255, y: 1.1531814, z: 0.8546848}
+  m_Size: {x: 1.2118349, y: 1.2543344, z: 1.470395}
+  m_Center: {x: 0.89408255, y: 1.1531814, z: 0.6752097}
 --- !u!114 &9029028299183556471
 MonoBehaviour:
   m_ObjectHideFlags: 0

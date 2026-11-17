@@ -8,9 +8,14 @@ public class TablonNetwork : NetworkBehaviour
 
     [Header("Prefabs a spawnear (Red)")]
     public GameObject prefabLavarropas;
+    public GameObject prefabSecarropas;
+    public GameObject prefabReiniciadora;
+
 
     [Header("Puntos de Aparición (Spawns)")]
     public Transform spawnLavarropas1;
+    public Transform spawnSecarropas1;
+    public Transform spawnReiniciadora1;
 
     void Awake()
     {
@@ -39,15 +44,34 @@ public class TablonNetwork : NetworkBehaviour
     {
         if (logica.mejorasCompradas.Contains(idMejora)) return;
 
+        int precio = logica.ObtenerPrecio(idMejora);
+
+        if (DineroManager.Instancia == null) return;
+        if (!DineroManager.Instancia.TieneSuficiente(precio))
+        {
+            Debug.Log("Dinero insuficiente para mejora " + idMejora);
+            return;
+        }
+
+        DineroManager.Instancia.RestarDinero(precio);
+
         switch (idMejora)
         {
             case 1:
                 InstanciarObjetoRed(prefabLavarropas, spawnLavarropas1);
                 break;
-                // case 2: ...
+            case 2:
+                InstanciarObjetoRed(prefabSecarropas, spawnSecarropas1);
+                break;
+            case 3:
+                InstanciarObjetoRed(prefabReiniciadora, spawnReiniciadora1);
+                break;
         }
+
         ConfirmarCompraClientRpc(idMejora);
     }
+
+
 
     private void InstanciarObjetoRed(GameObject prefab, Transform puntoSpawn)
     {

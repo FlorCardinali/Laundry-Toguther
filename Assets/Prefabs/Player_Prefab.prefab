@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 1593733098457099628}
   - component: {fileID: 2244598787998895864}
   - component: {fileID: 7752019744588664561}
-  - component: {fileID: 7807605199316466034}
   m_Layer: 0
   m_Name: Modelo
   m_TagString: Untagged
@@ -91,29 +90,6 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &7807605199316466034
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1969343633761511881}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &2038883334912632412
 GameObject:
   m_ObjectHideFlags: 0
@@ -594,6 +570,11 @@ MonoBehaviour:
   - {fileID: 6502940769198215246, guid: 8b13181782e7c9d42a05749531dc020e, type: 3}
   - {fileID: 6502940769198215246, guid: ffc0997adc1f7484bbba17cbeebe6dea, type: 3}
   - {fileID: 3464204122997052559, guid: 606875017c285604ea3bad6bd305311c, type: 3}
+  distanciaMaximaSoltar: 3
+  alturaOffset: 0.25
+  capasSoltables:
+    serializedVersion: 2
+    m_Bits: 65
   objetoOcultoEnMano:
     UpdateTraits:
       MinSecondsBetweenUpdates: 0

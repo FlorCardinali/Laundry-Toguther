@@ -6,6 +6,9 @@ TagManager:
   tags:
   - BotonLavarropas
   - PuertaLavarropas
+  - LuzZona1
+  - LuzZona2
+  - LuzZona3
   layers:
   - Default
   - TransparentFX
@@ -13,9 +16,9 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
-  - 
+  - Suelo
+  - ObjetosEstaticos
+  - Paredes
   - 
   - 
   - 

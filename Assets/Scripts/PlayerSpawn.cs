@@ -1,5 +1,6 @@
 using UnityEngine;
 using Unity.Netcode;
+using System.Collections;
 
 public class PlayerSpawn : NetworkBehaviour
 {
@@ -7,20 +8,33 @@ public class PlayerSpawn : NetworkBehaviour
     {
         base.OnNetworkSpawn();
 
-        // Solo movemos a nuestro propio personaje local
-        if (IsOwner)
+        if (IsServer)
         {
-            if (SpawnManager.Instance != null)
+            StartCoroutine(SpawnearAlSiguienteFrame());
+        }
+    }
+
+    private IEnumerator SpawnearAlSiguienteFrame()
+    {
+        yield return null;
+
+        if (SpawnManager.Instance != null)
+        {
+            Vector3 nuevaPosicion = SpawnManager.Instance.ObtenerPosicionParaCliente(OwnerClientId);
+
+            CharacterController cc = GetComponent<CharacterController>();
+            if (cc != null) cc.enabled = false;
+
+            transform.position = nuevaPosicion;
+
+            // Forzamos a que el CharacterController se entere del nuevo lugar
+            if (cc != null) cc.enabled = true;
+
+            // Opcional: si usás NetworkTransform, forzamos el teletransporte
+            var netTransform = GetComponent<Unity.Netcode.Components.NetworkTransform>();
+            if (netTransform != null)
             {
-                // Obtenemos la posición exacta según el ID de red de este cliente
-                Vector3 nuevaPosicion = SpawnManager.Instance.ObtenerPosicionParaCliente(OwnerClientId);
-
-                CharacterController cc = GetComponent<CharacterController>();
-                if (cc != null) cc.enabled = false;
-
-                transform.position = nuevaPosicion;
-
-                if (cc != null) cc.enabled = true;
+                netTransform.Teleport(nuevaPosicion, transform.rotation, transform.localScale);
             }
         }
     }
